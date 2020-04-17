@@ -11,52 +11,57 @@ public class RisolviQuadrato {
 	private List<List<Integer>> soluzioni;
 	
 	public RisolviQuadrato(int N) {
-		this.N = N ;
-		this.N2 = N*N ;
-		this.magica = N*(N2+1)/2 ;
+		this.N = N;
+		this.N2 = N*N;
+		this.magica = N*(N2+1)/2;
 	}
 	
 	// Calcola tutti i quadrati magici
 	public List<List<Integer>> quadrati() {
-		List<Integer> parziale = new ArrayList<>() ;
-		int livello = 0 ;
+		List<Integer> parziale = new ArrayList<>();
+		int livello = 0;
 		
-		this.soluzioni = new ArrayList<List<Integer>>() ;
+		this.soluzioni = new ArrayList<List<Integer>>();
 		
-		cerca(parziale, livello) ;
+		cerca(parziale, livello);
 		
-		return this.soluzioni ;
+		return this.soluzioni;
 	}
 	
 	// procedura ricorsiva (privata)
 	private void cerca(List<Integer> parziale, int livello) {
 		
-		if(livello==N2) {
-			// caso terminale
+		if(livello==N2) { //Sono nel caso terminale, il livello e' arrivato all'ultima casella
 			if(controlla(parziale)) {
-				// è magico!!
-				System.out.println(parziale) ;
-				this.soluzioni.add(new ArrayList<>(parziale)) ;
+				// this.soluzioni.add(parziale); se faccio cosi' non va bene perche' e' il riferimento, e alla fine sara' vuota
+				this.soluzioni.add(new ArrayList<>(parziale));
 			}
-			return ;
+			return;
 		}
 		
-		// controlli intermedi, quando livello è multiplo di N (righe complete)
+		// controlli intermedi quando il livello e' multiplo di N, cioe' ho delle righe complete... ovvero
+		// controlla ogni riga se ha gia' senso... perche' i valori magici so gia' quali sono, quindi dopo una
+		// riga posso gia' controllare se ha senso andare avanti oppure no
 		if(livello%N==0 && livello!=0) {
-			if(!controllaRiga(parziale, livello/N-1))
-				return ; // potatura (pruning) dell'albero di ricerca
+			if(!controllaRiga(parziale, livello/N-1)) {
+				return; //POTATURA dell'albero ricerca
+			}
 		}
 		
-		// caso intermedio
+		//Caso intermedio
 		for(int valore=1; valore<=N2; valore++) {
-			if(!parziale.contains(valore)) {
-				// prova 'valore'
-				parziale.add(valore) ;
+			if(!parziale.contains(valore)) { //Non posso avere numeri ripetuti, quindi cerco se c'e' gia'
+				parziale.add(valore);
+				
+				//RICORSIONE
 				cerca(parziale, livello+1);
-				parziale.remove(parziale.size()-1) ;
+				
+				//backtracking
+				parziale.remove(parziale.size()-1);
 			}
 		}
 	}
+	
 		
 	/**
 	 * Verifica se una soluzione rispetta tutte le somme
@@ -110,7 +115,6 @@ public class RisolviQuadrato {
 		int somma=0;
 		for(int col=0; col<N; col++)
 			somma+=parziale.get(riga*N+col);
-		return somma==magica ;
-			
+		return somma==magica;
 	}
 }
